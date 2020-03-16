@@ -2,6 +2,9 @@
   "nome": {
     "type": "STRING"
   },
+  "email": {
+    "type": "STRING"
+  },
   "comuniquese": {
     "type": "STRING"
   },

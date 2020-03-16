@@ -1,2 +1,3 @@
  - Não devem haver registros com mesmo dia e horário
  - O sistema define o horário para o usuário (próximo horário disponível)
+ - O usuário pode recusar um horário

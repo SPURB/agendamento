@@ -3,24 +3,24 @@
     "id": 1,
     "sigla": "OUCAB",
     "nome": "Operação Urbana Consorciada Água Branca",
-    "analista": 1
+    "analista": 2
   },
-  { 
+  {
     "id": 2,
     "sigla": "OUCAE",
     "nome": "Operação Urbana Consorciada Água Espraiada",
-    "analista": 1
+    "analista": 2
   },
   {
     "id": 3,
     "sigla": "OU-C",
     "nome": "Operação Urbana Centro",
-    "analista": 2
+    "analista": 1
   },
   {
     "id": 4,
     "sigla": "OUCFL",
     "nome": "Operação Urbana Consorciada Faria Lima",
-    "analista": 2
+    "analista": 1
   }
 ]
