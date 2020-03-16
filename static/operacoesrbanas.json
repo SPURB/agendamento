@@ -1,0 +1,22 @@
+[
+  { 
+    "id": 1,
+    "sigla": "OUCAB",
+    "atendente": 1
+  },
+  { 
+    "id": 2,
+    "nome": "OUCAE",
+    "atendente": 1
+  },
+  {
+    "id": 3,
+    "nome": "OU-C",
+    "atendente": 2
+  },
+  {
+    "id": 4,
+    "nome": "OUCFL",
+    "atendente": 2
+  }
+]

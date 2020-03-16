@@ -1,0 +1,17 @@
+{
+  "nome": {
+    "type": "STRING"
+  },
+  "comuniquese": {
+    "type": "STRING"
+  },
+  "operacaourbana": {
+    "type": "INT"
+  },
+  "horario": {
+    "type": "INT"
+  },
+  "dia": {
+    "type": "DATE"
+  }
+}
