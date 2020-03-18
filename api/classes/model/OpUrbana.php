@@ -38,11 +38,6 @@ class Opurbana extends GenericDAO{
 	public function __set($campo, $valor) {
 		$this -> $campo = $valor;
 	}
-    
-	public function select($conditions = NULL, $orderColumns = NULL, $orderType = NULL, $selectColumns = NULL){
-        $orderColumns = array("data");
-        return parent::select($conditions, $orderColumns);
-	}
 
 
 }

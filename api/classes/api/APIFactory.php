@@ -18,10 +18,10 @@ class APIFactory{
 			case 'POST': $class = "Post"; break;
 			case 'PUT': $class = "Put"; break;
 			case 'DELETE': $class = "Delete"; break;
-			case 'OPTIONS':
-				header('Access-Control-Max-Age: 86400');
+            case 'OPTIONS':
+                header('Access-Control-Max-Age: 86400');
 				header("Content-Length: 0");
-				return NULL;
+                return NULL;
 		}
 
 		try{

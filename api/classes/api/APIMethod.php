@@ -2,6 +2,7 @@
 
 require_once 'exceptions/APIException.php';
 require_once APP_PATH.'/classes/model/APICallableModel.php';
+require_once APP_PATH.'/classes/base/main/Logger.php';
 
 abstract class APIMethod {
 	abstract static function load($request);
@@ -12,21 +13,12 @@ abstract class APIMethod {
             val = nome da classe
         */
 		$functions = array(
-            "agendamento" => "Agendamento",
-            "analista" => "Analista",
+          "analista"=>"Analista",
+          "agenda"=>"Agendamento"
 		);
         return $functions;
     }
     
-    /*
-    *   Headers customizados devem ser informados aqui para que sejam tratados antes do nginx
-    */
-    protected static function getCustomHeaders(){
-        return array(
-            "Current"
-        );
-    }
-
     
     /*
     * Obter instancia da classe correspondente a tabela requisitada
@@ -38,41 +30,18 @@ abstract class APIMethod {
 		}
         $className = $functions[$function];
         $classPath = APP_PATH.'/classes/model/'.$className.'.php';
-
         if(!file_exists($classPath)){
             throw new Exception("APIMethod Classe não encontrada! $className", 500);
         }
-      
         require_once $classPath;
 		$model = new $className();
         
-        if(!$model instanceof Winauth && !$model instanceof APICallableModel){
+        if(!$model instanceof APICallableModel){
             throw new Exception("APIMethod Classe inválida! $className", 500);
         }
-
+        
         return $model;
 	}
-
-    /*
-    * getallheaders nao funciona no nginx/fpm
-    */
-    protected static function getAllHeaders(){
-        if (!function_exists('getallheaders')) {
-            if (!is_array($_SERVER)) {
-                return array();
-            }
-            $headers = [];
-            foreach ($_SERVER as $name => $value) {
-                if (substr($name, 0, 5) == 'HTTP_') {
-                    $headers[str_replace(' ', '-', ucwords(strtolower(str_replace('_', ' ', substr($name, 5)))))] = $value;
-                }else if(in_array($name, self::getCustomHeaders())){
-                    $headers[$name] = $value;
-                }
-            }
-            return $headers;
-        }
-        return getallheaders();
-    }
 
 }
 

@@ -15,14 +15,13 @@ class Put extends APIMethod{
 		$result=NULL;
         
         try{
-          /*
-            $headers = parent::getAllHeaders();
+            $headers = getallheaders();
             //Header 'Current' deve conter a key de autorização
             $token = $headers['Current'];
             if(!isset($token) || APIKey::check($token) !== TRUE){
                 throw new APIException($_SERVER['REMOTE_ADDR']." Token incorreto ", 403);
             }
-*/
+
             $obj = parent::getTable($table);
 
             if($id > 0){
