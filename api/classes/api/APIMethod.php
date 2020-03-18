@@ -14,7 +14,8 @@ abstract class APIMethod {
         */
 		$functions = array(
           "analista"=>"Analista",
-          "agenda"=>"Agendamento"
+          "agenda"=>"Agendamento",
+          "status"=>"StatusHorario"
 		);
         return $functions;
     }
