@@ -1,6 +1,8 @@
 <template>
   <div id="agendamento">
 
+    <Modal :validateForm="validateForm" />
+
     <logo-spurb :fill-type="'#FFF'" :fill-brand="'#038375'" />
 
     <h1>Formulário de Agendamento</h1>
@@ -21,7 +23,16 @@
         <input
           type="email"
           class="input-form"
-          v-model="form.email"
+          v-model="form.usuario"
+          required>
+      </div>
+
+      <div class="form-section">
+        <label>Processo:</label>
+        <input
+          type="text"
+          class="input-form"
+          v-model="form.processo"
           required>
       </div>
 
@@ -29,7 +40,7 @@
         <label>Operação Urbana:</label>
         <select
           class="select-form"
-          v-model="form.operacaourbana"
+          v-model="form.opUrbana"
           required>
           <option value="" disabled selected>Selecione um opção</option>
           <option
@@ -49,6 +60,7 @@
           @change="handleData"
           v-model="form.data"
           class="input-form"
+          :disabled="form.opUrbana == '' ? true : false"
           required>
       </div>
 
@@ -64,8 +76,9 @@
               type="radio"
               v-model="form.horario"
               :value="horario.id"
-              :disabled="horariosL[index].livre"
+              :disabled="horariosL.length > 0 ? horariosL[index].livre : true"
               class="input-radio"
+              name="horario"
               required>
             <label>{{horario.nome}}</label>
           </div>
@@ -85,24 +98,33 @@
 
 <script>
 import LogoSpurb from '../components/LogoSpurb'
+import Modal from '../components/Modal'
 import OperacaoUrbana from '../../../static/operacoesurbanas.json'
 import Horarios from '../../../static/horarios.json'
+import Agendamento from '../services/agendamento'
+import Status from '../services/status-data'
 
 export default {
   name: 'Agendamento',
   components: {
-    LogoSpurb
+    LogoSpurb,
+    Modal
   },
   data () {
     return {
       form: {
         nome: null,
-        email: null,
-        operacaourbana: '',
+        usuario: null,
+        opUrbana: '',
+        processo: null,
         horario: null,
         data: null
       },
-      horariosL: [{ id: 1, livre: true }, { id: 2, livre: true }, { id: 3, livre: true }, { id: 4, livre: true }, { id: 5, livre: true }]
+      horariosL: [],
+      validateForm: {
+        showModal: false,
+        type: false
+      }
     }
   },
   computed: {
@@ -118,31 +140,60 @@ export default {
       const radios = document.querySelectorAll('.input-radio')
       radios.forEach(r => {
         r.checked = false
-        this.form.data = ''
+        this.form.horario = null
       })
+    },
+    clearForms () {
+      this.clearInputRadios()
+      this.form.nome = null
+      this.form.usuario = null
+      this.form.opUrbana = ''
+      this.form.processo = null
+      this.form.data = null
     },
     handleData () {
-      return new Promise(resolve => {
-        setTimeout(() => {
-          if (this.form.data === '2020-03-17') {
-            this.horariosL = [{ id: 1, livre: false }, { id: 2, livre: false }, { id: 3, livre: true }, { id: 4, livre: true }, { id: 5, livre: false }]
-          } else {
-            this.horariosL = [{ id: 1, livre: false }, { id: 2, livre: false }, { id: 3, livre: false }, { id: 4, livre: false }, { id: 5, livre: false }]
-          }
-          resolve(this.horariosF)
-        }, 500)
+      Status.get(this.form.data, this.form.opUrbana).then(res => {
+        console.log(res)
+        this.horariosL = res.data
+        console.log(this.horariosL)
+      }).catch(err => {
+        console.log(err)
       })
     },
-    handleSubmit () {
+    async handleSubmit () {
       try {
-        if (this.form.nome !== null && this.form.email !== null && this.form.operacaourbana !== '' && this.form.horario !== null && this.form.data !== null) {
-          console.log(this.form)
+        if (this.form.nome !== null && this.form.usuario !== null && this.form.opUrbana !== '' &&
+        this.form.processo !== null && this.form.horario !== null && this.form.data !== null) {
+          await Agendamento.post(this.form).then(res => {
+            this.toggleModal(0)
+            this.toggleModal()
+          }).catch(() => {
+            this.toggleModal(1)
+            this.toggleModal()
+          })
         } else {
           const invalid = true
           throw invalid
         }
       } catch (err) {
+        this.toggleModal(1)
+        this.toggleModal()
         console.log(err)
+      }
+    },
+    toggleModal (i = 2) { // i é por padrão 2 que retorna o valor default de this.validateForm
+      if (i === 0) {
+        this.validateForm.showModal = true
+        this.validateForm.type = true
+      } else if (i === 1) {
+        this.validateForm.showModal = true
+        this.validateForm.type = false
+      } else {
+        setTimeout(() => {
+          this.clearForms()
+          this.validateForm.showModal = false
+          this.validateForm.type = false
+        }, 2500)
       }
     }
   }
@@ -150,6 +201,7 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+@import '../assets/scss/variables';
 
 #agendamento {
   display: flex;
@@ -198,7 +250,7 @@ export default {
         .custom-radio {
           align-items: center;
           border-radius: 5px;
-          background-color: var(--verde);
+          background-color: $verde;
           display: flex;
           margin: 3px;
           width: 20%;
@@ -214,10 +266,10 @@ export default {
       }
 
       .btn-submit {
-        background-color: var(--verde);
-        border: 1px var(--verde-claro) solid;
+        background-color: $verde;
+        border: 1px $verde-claro solid;
         border-radius: 5px;
-        color: var(--branco);
+        color: $branco;
         font-size: 15pt;
         margin-top: 7px;
         padding: 5px;
@@ -225,7 +277,7 @@ export default {
 
         &:hover {
           cursor: pointer;
-          background-color: var(--verde-escuro);
+          background-color: $verde-escuro;
         }
       }
     }
