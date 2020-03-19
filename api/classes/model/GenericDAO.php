@@ -78,7 +78,8 @@ class GenericDAO implements APICallableModel{
 	 *
 	 */
 	protected function bind($objetobd, $objetoclass = NULL){
-        if(! ($classe = get_class($objetoclass) ))
+        if(! ($classe = @get_class($objetoclass) ))
+          if(! ($classe = get_class() ))
 			throw new DAOException("Falha no mapeamento do banco de dados. O parâmetro fornecido não é um objeto.");
 
 		if(! (is_array($this->columns) ) )
@@ -260,7 +261,6 @@ class GenericDAO implements APICallableModel{
 			$sqlColunas.=$campobd;
 			$sqlVals.="?";
 			array_push($values, $this->$campoClass);
-            error_log($campoClass." val = ".$this->$campoClass);
 			$first = false;
 		}
 		$sql = "INSERT INTO ".$this->tableName."( ".$sqlColunas." ) VALUES ( ".$sqlVals." )";
@@ -346,8 +346,7 @@ class GenericDAO implements APICallableModel{
 		}
 		$rows = array();
 		$result = $this->base->consultar($sql, $values);
-        $result = $this->encodeObject($result);
-        return $result;
+        return $result;        
 	}
     
     private function mapOneToMany($obj){
@@ -360,9 +359,6 @@ class GenericDAO implements APICallableModel{
                         $objClazz = new $clazzName();
                         if(!$objClazz instanceof APICallableModel){
                             throw new Exception($clazzName." classe incompativel.");
-                        }
-                        if(intval($valor) < 1){
-                            throw new Exception($valor." ID inválido no atributo ".$prop);
                         }
                         $objRelac = $objClazz->get($valor);
                         $obj->$prop = $objRelac;
@@ -385,7 +381,7 @@ class GenericDAO implements APICallableModel{
                     if(!$objClazz instanceof APICallableModel){
                         throw new Exception($clazzName." classe incompativel.");
                     }
-                    $obj->$prop = $objClazz->getList($filtro);
+                    $obj->$prop = $objClazz->select($filtro);
                 }catch(Exception $ex){
                     Logger::write($ex);
                 }
@@ -447,7 +443,7 @@ class GenericDAO implements APICallableModel{
 
 		$selectors = '';
 
-		$last_key = end(array_keys($arr));
+		$last_key = @end(@array_keys($arr));
 
 		foreach ($arr as $key => $value) {
 
