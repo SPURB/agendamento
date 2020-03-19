@@ -40,6 +40,7 @@
         <label>Operação Urbana:</label>
         <select
           class="select-form"
+          @change="handleData"
           v-model="form.opUrbana"
           required>
           <option value="" disabled selected>Selecione um opção</option>
@@ -68,7 +69,7 @@
         <label>Horário do agendamento:</label>
         <div class="content-radios">
           <div
-            :key="horario.id"
+            :key="index"
             class="custom-radio"
             v-for="(horario, index) in horarios"
           >
@@ -76,7 +77,7 @@
               type="radio"
               v-model="form.horario"
               :value="horario.id"
-              :disabled="horariosL.length > 0 ? horariosL[index].livre : true"
+              :disabled="horariosL.length > 0 ? !horariosL[index].livre : true"
               class="input-radio"
               name="horario"
               required>
@@ -151,14 +152,22 @@ export default {
       this.form.processo = null
       this.form.data = null
     },
-    handleData () {
-      Status.get(this.form.data, this.form.opUrbana).then(res => {
-        console.log(res)
-        this.horariosL = res.data
-        console.log(this.horariosL)
-      }).catch(err => {
-        console.log(err)
-      })
+    async handleData () {
+      if (this.form.data !== null && this.form.opUrbana !== null) {
+        await Status.get(this.form.data, this.form.opUrbana).then(res => {
+          this.clearInputRadios() // limpas as seleções caso haja mudança de data
+          this.horariosL = [] // zera o array
+          res.data.forEach(h => {
+            this.horariosL.push({
+              id: h.id,
+              livre: JSON.parse(h.livre) // converte de string para boolean
+            })
+          })
+        }).catch(() => {
+          this.toggleModal(1)
+          this.toggleModal()
+        })
+      }
     },
     async handleSubmit () {
       try {
@@ -178,7 +187,6 @@ export default {
       } catch (err) {
         this.toggleModal(1)
         this.toggleModal()
-        console.log(err)
       }
     },
     toggleModal (i = 2) { // i é por padrão 2 que retorna o valor default de this.validateForm
