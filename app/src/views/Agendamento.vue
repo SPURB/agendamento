@@ -2,10 +2,10 @@
   <div id="agendamento">
 
     <Modal :validateForm="validateForm" />
-
-    <logo-spurb :fill-type="'#FFF'" :fill-brand="'#038375'" />
-
-    <h1>Formulário de Agendamento</h1>
+    <div class="logo">
+      <logo-spurb :fill-type="'#FFF'" :fill-brand="'#FFF'" />
+    </div>
+    <h1>Formulário de agendamento</h1>
 
     <form id="postForm" @submit.prevent="handleSubmit">
 
@@ -65,7 +65,7 @@
           required>
       </div>
 
-      <div class="form-section">
+      <div class="form-section agendamento">
         <label>Horário do agendamento:</label>
         <div class="content-radios">
           <div
@@ -86,11 +86,11 @@
         </div>
       </div>
 
-      <div class="form-section">
+      <div class="form-section action">
         <button
           type="submit"
           class="btn-submit">
-          Agendar
+          agendar
         </button>
       </div>
     </form>
@@ -211,13 +211,28 @@ export default {
 <style lang="scss" scoped>
 @import '../assets/scss/variables';
 
+.logo {
+  margin: 1rem;
+}
+
+.input-form,
+.select-form {
+  min-height: 2.75rem;
+  padding: 0.5rem;
+  font-family: $grot
+}
+
+.form-section.agendamento {
+  margin: 1rem 0;
+}
+
 #agendamento {
   display: flex;
   flex-direction: column;
   align-items: center;
-  width: 100%;
-  padding: 50px;
   justify-content: center;
+  width: 100%;
+  padding: 0;
 
   h1 {
     margin-top: 30px;
@@ -274,18 +289,19 @@ export default {
       }
 
       .btn-submit {
-        background-color: $verde;
-        border: 1px $verde-claro solid;
+        background-color: $verde-escuro;
+        border: 1px $verde solid;
         border-radius: 5px;
         color: $branco;
-        font-size: 15pt;
+        font-size: 1.5rem;
         margin-top: 7px;
-        padding: 5px;
-        height: 40px;
+        padding: 0.5rem;
 
         &:hover {
+          transition: all ease-in-out 0.15s;
           cursor: pointer;
-          background-color: $verde-escuro;
+          background-color: $verde;
+          border-color: #fff;
         }
       }
     }
